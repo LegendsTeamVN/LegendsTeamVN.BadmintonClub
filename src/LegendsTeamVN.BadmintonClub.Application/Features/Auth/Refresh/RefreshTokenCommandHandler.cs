@@ -55,6 +55,11 @@ public sealed class RefreshTokenCommandHandler(
             return Result.Failure<AuthenticationResponse>(Error.Unauthorized("Token.Expired", "Refresh token has expired."));
         }
 
+        if (cachedSession.AccessToken != request.AccessToken)
+        {
+            return Result.Failure<AuthenticationResponse>(Error.Unauthorized("Token.Expired", "Access token has expired."));
+        }
+
         var roles = await userManagerService.GetRolesAsync(userId);
         var permissions = await userManagerService.GetPermissionsAsync(userId);
 
