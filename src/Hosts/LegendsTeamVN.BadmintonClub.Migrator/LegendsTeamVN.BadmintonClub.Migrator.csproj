@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\LegendsTeamVN.BadmintonClub.Infrastructure\LegendsTeamVN.BadmintonClub.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\LegendsTeamVN.BadmintonClub.Persistence\LegendsTeamVN.BadmintonClub.Persistence.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\LegendsTeamVN.Core.Utilities\LegendsTeamVN.Core.Utilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+  </ItemGroup>
+
+</Project>

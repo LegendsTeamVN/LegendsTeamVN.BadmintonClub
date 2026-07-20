@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BuildingBlocks\LegendsTeamVN.Core.Application\LegendsTeamVN.Core.Application.csproj" />
+    <ProjectReference Include="..\LegendsTeamVN.BadmintonClub.Domain\LegendsTeamVN.BadmintonClub.Domain.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\LegendsTeamVN.Core.Identity\LegendsTeamVN.Core.Identity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Users\GetList\" />
+  </ItemGroup>
+
+</Project>

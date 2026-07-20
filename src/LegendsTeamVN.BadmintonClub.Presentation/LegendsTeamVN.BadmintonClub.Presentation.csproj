@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BuildingBlocks\LegendsTeamVN.Core.Presentation\LegendsTeamVN.Core.Presentation.csproj" />
+    <ProjectReference Include="..\LegendsTeamVN.BadmintonClub.Application\LegendsTeamVN.BadmintonClub.Application.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\LegendsTeamVN.Core.Utilities\LegendsTeamVN.Core.Utilities.csproj" />
+    <ProjectReference Include="..\BuildingBlocks\LegendsTeamVN.Core.Identity\LegendsTeamVN.Core.Identity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.10" />
+  </ItemGroup>
+
+</Project>
