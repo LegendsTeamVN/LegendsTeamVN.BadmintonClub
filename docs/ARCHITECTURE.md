@@ -2,7 +2,7 @@
 
 This document explains in-depth the **.NET 10** architecture used in the LegendsTeamVN.BadmintonClub project, including Clean Architecture, directory structure, and the CQRS/MediatR flow.
 
-*[Đọc bằng Tiếng Việt](ARCHITECTURE.vi.md)*
+*[Đọc bằng Tiếng Việt](ARCHITECTURE.VI.md)*
 
 ---
 

@@ -2,7 +2,7 @@
 
 This document explains the database architecture used in the LegendsTeamVN.BadmintonClub system, including ERD diagrams, complex tables, and design rules.
 
-*[Đọc bằng Tiếng Việt](DATABASE.vi.md)*
+*[Đọc bằng Tiếng Việt](DATABASE.VI.md)*
 
 ---
 

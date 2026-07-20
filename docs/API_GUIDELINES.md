@@ -2,7 +2,7 @@
 
 To ensure consistency and ease of integration for the Frontend / Mobile App teams, all software engineers developing new features at LegendsTeamVN must strictly adhere to the following API design rules.
 
-*[Đọc bằng Tiếng Việt](API_GUIDELINES.vi.md)*
+*[Đọc bằng Tiếng Việt](API_GUIDELINES.VI.md)*
 
 ---
 

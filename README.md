@@ -2,7 +2,7 @@
 
 [![CI/CD Pipeline](https://github.com/LegendsTeamVN/LegendsTeamVN.BadmintonClub/actions/workflows/deploy.yml/badge.svg)](https://github.com/LegendsTeamVN/LegendsTeamVN.BadmintonClub/actions/workflows/deploy.yml)
 
-*[Read this in Vietnamese (Đọc bằng Tiếng Việt)](README.vi.md)*
+*[Read this in Vietnamese (Đọc bằng Tiếng Việt)](README.VI.md)*
 
 A modern, robust Backend API for managing the LegendsTeamVN Badminton Club. The project is built on **.NET 10** using **Clean Architecture**, **CQRS**, and **Domain-Driven Design (DDD)** principles to ensure scalability, maintainability, and testability.
 

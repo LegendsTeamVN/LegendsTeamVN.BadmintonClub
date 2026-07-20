@@ -101,9 +101,9 @@ Khi API đang chạy, bạn có thể xem danh sách các API và test trực ti
 
 Để đảm bảo mã nguồn luôn gọn gàng và dễ bảo trì, chúng tôi đã viết một bộ tài liệu chi tiết giải thích về Kiến trúc lõi, Cơ sở dữ liệu và Quy tắc thiết kế API.
 
-👉 **[Kiến trúc Hệ thống (Architecture)](docs/ARCHITECTURE.vi.md)**
-👉 **[Thiết kế Cơ sở dữ liệu (Database)](docs/DATABASE.vi.md)**
-👉 **[Hướng dẫn Lập trình API (API Guidelines)](docs/API_GUIDELINES.vi.md)**
+👉 **[Kiến trúc Hệ thống (Architecture)](docs/ARCHITECTURE.VI.md)**
+👉 **[Thiết kế Cơ sở dữ liệu (Database)](docs/DATABASE.VI.md)**
+👉 **[Hướng dẫn Lập trình API (API Guidelines)](docs/API_GUIDELINES.VI.md)**
 
 ## 📜 Giấy phép
 
