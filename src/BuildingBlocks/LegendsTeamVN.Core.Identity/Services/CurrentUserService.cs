@@ -26,4 +26,7 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
     }
     
     public bool IsAuthenticated => _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
+
+    public List<string>? Roles => _httpContextAccessor.HttpContext?.User?.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
+    public List<string>? Permissions => _httpContextAccessor.HttpContext?.User?.FindAll("permissions").Select(c => c.Value).ToList();
 }

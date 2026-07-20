@@ -15,9 +15,19 @@ public sealed class GetUsersQueryHandler(IUserManagerService userManagerService)
 
         query = query.ApplyBaseFilter(filter, "Email", "UserName");
 
-        var pagedResult = await query
-            .Select(user => new UserResponse(user.Id, user.Email!, user.UserName))
+        var pagedUsers = await query
             .ToPagedResultAsync(filter.PageNumber, filter.PageSize, cancellationToken);
+
+        var userResponses = new List<UserResponse>();
+        foreach (var user in pagedUsers.Items)
+        {
+            var roles = await userManagerService.GetRolesAsync(user.Id);
+            var permissions = await userManagerService.GetPermissionsAsync(user.Id);
+            
+            userResponses.Add(new UserResponse(user.Id, user.Email!, user.UserName, roles, permissions));
+        }
+
+        var pagedResult = new PagedResult<UserResponse>(userResponses, pagedUsers.TotalCount, pagedUsers.PageNumber, pagedUsers.PageSize);
 
         return Result.Success(pagedResult);
     }
