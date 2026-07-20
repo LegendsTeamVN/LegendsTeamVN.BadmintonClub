@@ -7,22 +7,34 @@
     <File Path=".github/workflows/deploy.yml" />
     <File Path="Dockerfile" />
     <File Path="docker-compose.yml" />
+    <File Path="README.VI.md" />
+  </Folder>
+  <Folder Name="/.github/" />
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/deploy.yml" />
+  </Folder>
+  <Folder Name="/docs/">
+    <File Path="docs/API_GUIDELINES.md" />
+    <File Path="docs/ARCHITECTURE.md" />
+    <File Path="docs/ARCHITECTURE.vi.md" />
+    <File Path="docs/DATABASE.md" />
+    <File Path="docs/DATABASE.vi.md" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/LegendsTeamVN.BadmintonClub.Domain/LegendsTeamVN.BadmintonClub.Domain.csproj" />
     <Project Path="src/LegendsTeamVN.BadmintonClub.Application/LegendsTeamVN.BadmintonClub.Application.csproj" />
-    <Project Path="src/LegendsTeamVN.BadmintonClub.Persistence/LegendsTeamVN.BadmintonClub.Persistence.csproj" />
+    <Project Path="src/LegendsTeamVN.BadmintonClub.Domain/LegendsTeamVN.BadmintonClub.Domain.csproj" />
     <Project Path="src/LegendsTeamVN.BadmintonClub.Infrastructure/LegendsTeamVN.BadmintonClub.Infrastructure.csproj" />
+    <Project Path="src/LegendsTeamVN.BadmintonClub.Persistence/LegendsTeamVN.BadmintonClub.Persistence.csproj" />
     <Project Path="src/LegendsTeamVN.BadmintonClub.Presentation/LegendsTeamVN.BadmintonClub.Presentation.csproj" />
   </Folder>
   <Folder Name="/src/BuildingBlocks/">
-    <Project Path="src/BuildingBlocks/LegendsTeamVN.Core.Domain/LegendsTeamVN.Core.Domain.csproj" />
-    <Project Path="src/BuildingBlocks/LegendsTeamVN.Core.Utilities/LegendsTeamVN.Core.Utilities.csproj" />
     <Project Path="src/BuildingBlocks/LegendsTeamVN.Core.Application/LegendsTeamVN.Core.Application.csproj" />
+    <Project Path="src/BuildingBlocks/LegendsTeamVN.Core.Domain/LegendsTeamVN.Core.Domain.csproj" />
+    <Project Path="src/BuildingBlocks/LegendsTeamVN.Core.Identity/LegendsTeamVN.Core.Identity.csproj" />
     <Project Path="src/BuildingBlocks/LegendsTeamVN.Core.Infrastructure/LegendsTeamVN.Core.Infrastructure.csproj" />
     <Project Path="src/BuildingBlocks/LegendsTeamVN.Core.Persistence/LegendsTeamVN.Core.Persistence.csproj" />
     <Project Path="src/BuildingBlocks/LegendsTeamVN.Core.Presentation/LegendsTeamVN.Core.Presentation.csproj" />
-    <Project Path="src/BuildingBlocks/LegendsTeamVN.Core.Identity/LegendsTeamVN.Core.Identity.csproj" />
+    <Project Path="src/BuildingBlocks/LegendsTeamVN.Core.Utilities/LegendsTeamVN.Core.Utilities.csproj" />
   </Folder>
   <Folder Name="/src/Hosts/">
     <Project Path="src/Hosts/LegendsTeamVN.BadmintonClub.API/LegendsTeamVN.BadmintonClub.API.csproj" />
