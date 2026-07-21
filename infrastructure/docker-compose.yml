@@ -21,8 +21,7 @@ services:
       - '6379:6379'
     volumes:
       - redis-data:/data
-    environment:
-      - REDIS_ARGS=--requirepass Admin@123 --appendonly yes
+    command: redis-server --requirepass "Admin@123" --appendonly yes
     restart: unless-stopped
 
   rabbitmq:
