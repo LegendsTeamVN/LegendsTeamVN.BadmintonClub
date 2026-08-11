@@ -9,7 +9,37 @@ namespace LegendsTeamVN.Core.Persistence.DependencyInjection.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddDbContextUnitOfWork<TContext>(this IServiceCollection services, ConnectionStringsOptions configureOptions) where TContext : DbContext, IUnitOfWork
+    public static IServiceCollection AddPostgreSQLDbContextUnitOfWork<TContext>(this IServiceCollection services, ConnectionStringsOptions configureOptions) where TContext : DbContext, IUnitOfWork
+    {
+        services.AddDbContext<TContext>((sp, options) =>
+        {
+            var updateAuditableEntitiesInterceptor = sp.GetRequiredService<AuditableEntityInterceptor>();
+            var softDeleteEntitiesInterceptor = sp.GetRequiredService<SoftDeleteInterceptor>();
+
+            options.UseNpgsql(configureOptions.Database, npgsqlOptions =>
+            {
+                if (!string.IsNullOrEmpty(configureOptions.MigrationsAssembly))
+                {
+                    npgsqlOptions.MigrationsAssembly(configureOptions.MigrationsAssembly);
+                }
+                if (configureOptions.CommandTimeout.HasValue)
+                {
+                    npgsqlOptions.CommandTimeout(configureOptions.CommandTimeout.Value);
+                }
+            });
+
+            options.AddInterceptors(updateAuditableEntitiesInterceptor, softDeleteEntitiesInterceptor);
+
+            options.EnableDetailedErrors()
+            .EnableSensitiveDataLogging()
+            .UseLazyLoadingProxies();
+        });
+
+        services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<TContext>());
+        return services;
+    }
+
+    public static IServiceCollection AddSqlServerDbContextUnitOfWork<TContext>(this IServiceCollection services, ConnectionStringsOptions configureOptions) where TContext : DbContext, IUnitOfWork
     {
         services.AddDbContext<TContext>((sp, options) =>
         {

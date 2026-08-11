@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/infrastructure/">
+    <File Path="infrastructure/docker-compose.yml" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
@@ -7,7 +10,6 @@
     <File Path="README.VI.md" />
     <File Path="CONTRIBUTING.md" />
     <File Path="CONTRIBUTING.VI.md" />
-    <File Path=".github/workflows/deploy.yml" />
     <File Path="Dockerfile" />
     <File Path="docker-compose.yml" />
   </Folder>
