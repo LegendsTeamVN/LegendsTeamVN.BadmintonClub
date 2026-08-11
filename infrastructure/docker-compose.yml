@@ -1,21 +1,19 @@
-version: '3.8'
-
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sqlserver_db
+  postgres:
+    image: postgres:18-alpine
+    container_name: postgres
     environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Admin@123
-      - MSSQL_PID=Developer
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Admin@123
+      POSTGRES_DB: postgres
     ports:
-      - "1433:1433"
+      - '5432:5432'
     volumes:
-      - sqlserver-data:/var/opt/mssql
+      - postgres-data:/var/lib/postgresql
     restart: unless-stopped
 
   redis:
-    image: redis:latest
+    image: redis:8.10.0-alpine
     container_name: redis
     ports:
       - '6379:6379'
@@ -38,22 +36,8 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
       - rabbitmq_log:/var/log/rabbitmq
 
-  nginx-proxy-manager:
-    image: 'jc21/nginx-proxy-manager:latest'
-    container_name: nginx-proxy-manager
-    restart: unless-stopped
-    ports:
-      - '80:80'
-      - '81:81'
-      - '443:443'
-    volumes:
-      - npm-data:/data
-      - npm-letsencrypt:/etc/letsencrypt
-
 volumes:
-  sqlserver-data:
   redis-data:
-  rabbitmq-data:
+  rabbitmq_data:
   rabbitmq_log:
-  npm-data:
-  npm-letsencrypt:
+  postgres-data:

@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddInterceptorPersistence();
 
-        services.AddDbContextUnitOfWork<BadmintonDbContext>(connectionStrings);
+        services.AddPostgreSQLDbContextUnitOfWork<BadmintonDbContext>(connectionStrings);
 
         services.AddScoped<ICourtRepository, CourtRepository>();
 

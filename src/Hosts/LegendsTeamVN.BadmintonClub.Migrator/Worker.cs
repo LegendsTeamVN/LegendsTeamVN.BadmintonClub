@@ -1,5 +1,6 @@
 using LegendsTeamVN.BadmintonClub.Persistence;
 using LegendsTeamVN.Core.Identity.Data;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace LegendsTeamVN.BadmintonClub.Migrator;

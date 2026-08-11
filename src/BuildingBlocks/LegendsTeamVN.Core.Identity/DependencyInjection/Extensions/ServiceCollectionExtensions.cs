@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCoreIdentity(this IServiceCollection services, ConnectionStringsOptions connectionStrings, JwtOptions jwtOptions)
     {
-        services.AddDatabaseIdentity(connectionStrings);
+        services.AddPostgreSQLIdentity(connectionStrings);
 
         services.AddIdentity<AppUser, AppRole>(options =>
         {
@@ -51,7 +51,33 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddDatabaseIdentity(this IServiceCollection services, ConnectionStringsOptions connectionStrings)
+    public static IServiceCollection AddPostgreSQLIdentity(this IServiceCollection services, ConnectionStringsOptions connectionStrings)
+    {
+        if (connectionStrings.Database != null)
+        {
+            services.AddDbContext<AppIdentityDbContext>(options =>
+            {
+                options.UseNpgsql(connectionStrings.Database, npgsqlOptions =>
+                {
+                    if (!string.IsNullOrEmpty(connectionStrings.MigrationsAssembly))
+                    {
+                        npgsqlOptions.MigrationsAssembly(connectionStrings.MigrationsAssembly);
+                    }
+                    if (connectionStrings.CommandTimeout.HasValue)
+                    {
+                        npgsqlOptions.CommandTimeout(connectionStrings.CommandTimeout.Value);
+                    }
+                });
+                options.EnableDetailedErrors()
+               .UseLazyLoadingProxies();
+
+            });
+        }
+
+        return services;
+    }
+
+    public static IServiceCollection AddSqlServerIdentity(this IServiceCollection services, ConnectionStringsOptions connectionStrings)
     {
         if (connectionStrings.Database != null)
         {

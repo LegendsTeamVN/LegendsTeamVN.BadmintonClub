@@ -28,7 +28,7 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
         })
         .AddEntityFrameworkStores<AppIdentityDbContext>();
 
-builder.Services.AddDatabaseIdentity(connectionStrings).AddDataSeederIdentity();
+builder.Services.AddPostgreSQLIdentity(connectionStrings).AddDataSeederIdentity();
 
 builder.Services.AddIdentityServices().AddIdentityContext();
 
