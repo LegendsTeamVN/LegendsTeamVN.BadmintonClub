@@ -10,6 +10,11 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddCoreInfrastructure(configuration);
+
+        services.AddMasstransitRabbitMQInfrastructure(
+            configuration,
+            AssemblyReference.Assembly);
+
         return services;
     }
 }

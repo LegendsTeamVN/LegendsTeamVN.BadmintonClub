@@ -30,7 +30,6 @@ public static class ServiceCollectionExtensions
 
         services.AddRedisInfrastructure(configuration);
 
-        //services.AddMasstransitRabbitMQInfrastructure(configuration);
         return services;
     }
 
@@ -49,7 +48,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddMasstransitRabbitMQInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddMasstransitRabbitMQInfrastructure(this IServiceCollection services, IConfiguration configuration, params Assembly[] consumerAssemblies)
     {
         var masstransitSection = configuration.GetSection("MasstransitConfiguration");
         if (!masstransitSection.Exists())
@@ -60,7 +59,10 @@ public static class ServiceCollectionExtensions
 
         services.AddMassTransit(cfg =>
         {
-            cfg.AddConsumers(Assembly.GetExecutingAssembly());
+            if (consumerAssemblies != null && consumerAssemblies.Any())
+            {
+                cfg.AddConsumers(consumerAssemblies);
+            }
 
             cfg.SetKebabCaseEndpointNameFormatter();
 
@@ -74,6 +76,7 @@ public static class ServiceCollectionExtensions
                     h.Password(masstransitConfig.Password);
                 });
 
+                rabbitConfig.ConfigureEndpoints(context);
             });
         });
 

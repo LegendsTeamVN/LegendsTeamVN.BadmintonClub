@@ -23,6 +23,11 @@ public class CourtEndpoint : EndpointGroupBase
 
     protected override void Map(RouteGroupBuilder group)
     {
+        group.MapPost("test-rent/{id:guid}", TestRentCourt)
+             .WithName("TestRentCourt")
+             .WithSummary("Test publish event thuê sân")
+             .AllowAnonymous();
+
         group.MapPost("", CreateCourt)
              .WithName("CreateCourt")
              .WithSummary("Creates a new badminton court")
@@ -95,5 +100,26 @@ public class CourtEndpoint : EndpointGroupBase
         return result.Match(
             onSuccess: id => Results.CreatedAtRoute("CreateCourt", new { id }, id)
         );
+    }
+
+    private static async Task<IResult> TestRentCourt(
+        [FromRoute] Guid id, 
+        [FromServices] LegendsTeamVN.Core.Application.Messaging.Events.IEventBus eventBus,
+        CancellationToken cancellationToken)
+    {
+        var rentedEvent = new LegendsTeamVN.BadmintonClub.Application.Features.Courts.Events.CourtRentedIntegrationEvent
+        {
+            CourtId = id,
+            RenterName = "Nguyen Van A (Test)",
+            RentedAt = DateTime.UtcNow
+        };
+
+        // Gửi sự kiện vào Message Bus (RabbitMQ)
+        await eventBus.PublishAsync(rentedEvent, cancellationToken);
+
+        return Results.Ok(new { 
+            Message = "Đã gửi sự kiện thuê sân thành công vào RabbitMQ!", 
+            Event = rentedEvent 
+        });
     }
 }
