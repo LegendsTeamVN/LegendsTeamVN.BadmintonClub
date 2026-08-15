@@ -31,6 +31,8 @@ services:
       - ConnectionStrings__Database=${DB_CONNECTION_STRING}
       - ConnectionStrings__Redis=${REDIS_CONNECTION_STRING}
       - ConnectionStrings__MigrationsAssembly=LegendsTeamVN.BadmintonClub.Migrator
+    networks:
+      - khoaluan
 
 networks:
   khoaluan:
