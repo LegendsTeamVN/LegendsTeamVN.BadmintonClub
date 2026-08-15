@@ -13,9 +13,9 @@ public class CourtPricingConfiguration : IEntityTypeConfiguration<CourtPricing>
 
         builder.Property(cp => cp.PricePerHour).HasColumnType("decimal(18,2)");
 
-        builder.HasOne(cp => cp.Court)
-            .WithMany(c => c.Pricings)
-            .HasForeignKey(cp => cp.CourtId)
+        builder.HasOne(cp => cp.Venue)
+            .WithMany(v => v.Pricings)
+            .HasForeignKey(cp => cp.VenueId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -4,21 +4,21 @@ namespace LegendsTeamVN.BadmintonClub.Domain.Entities;
 
 public class CourtPricing : SoftDeletableEntity<Guid>
 {
-    public Guid CourtId { get; private set; }
+    public Guid VenueId { get; private set; }
     public TimeOnly StartTime { get; private set; }
     public TimeOnly EndTime { get; private set; }
     public int? DayOfWeek { get; private set; }
     public decimal PricePerHour { get; private set; }
     public bool IsPeakHour { get; private set; }
 
-    public virtual Court Court { get; private set; } = default!;
+    public virtual Venue Venue { get; private set; } = default!;
 
     protected CourtPricing() { }
 
-    public CourtPricing(Guid courtId, TimeOnly startTime, TimeOnly endTime, decimal pricePerHour, int? dayOfWeek = null, bool isPeakHour = false)
+    public CourtPricing(Guid venueId, TimeOnly startTime, TimeOnly endTime, decimal pricePerHour, int? dayOfWeek = null, bool isPeakHour = false)
     {
         Id = Guid.NewGuid();
-        CourtId = courtId;
+        VenueId = venueId;
         StartTime = startTime;
         EndTime = endTime;
         PricePerHour = pricePerHour;
