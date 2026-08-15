@@ -14,5 +14,15 @@ public class CourtConfiguration : IEntityTypeConfiguration<Court>
         builder.Property(c => c.Name).HasMaxLength(100).IsRequired();
         builder.Property(c => c.Description).HasMaxLength(500);
         builder.Property(c => c.PricePerHour).HasColumnType("decimal(18,2)");
+
+        builder.HasOne(c => c.Venue)
+            .WithMany(v => v.Courts)
+            .HasForeignKey(c => c.VenueId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(c => c.SportType)
+            .WithMany(st => st.Courts)
+            .HasForeignKey(c => c.SportTypeId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
