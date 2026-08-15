@@ -1,8 +1,8 @@
-using LegendsTeamVN.Core.Domain.Entities;
+using LegendsTeamVN.Core.Domain.Aggregates;
 
 namespace LegendsTeamVN.BadmintonClub.Domain.Entities;
 
-public class CourtPricing : SoftDeletableEntity<Guid>
+public class CourtPricing : AggregateRoot<Guid>
 {
     public Guid VenueId { get; private set; }
     public TimeOnly StartTime { get; private set; }

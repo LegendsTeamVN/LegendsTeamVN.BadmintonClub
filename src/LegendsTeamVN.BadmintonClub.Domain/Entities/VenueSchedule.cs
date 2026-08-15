@@ -1,8 +1,8 @@
-using LegendsTeamVN.Core.Domain.Entities;
+using LegendsTeamVN.Core.Domain.Aggregates;
 
 namespace LegendsTeamVN.BadmintonClub.Domain.Entities;
 
-public class VenueSchedule : SoftDeletableEntity<Guid>
+public class VenueSchedule : AggregateRoot<Guid>
 {
     public Guid VenueId { get; private set; }
     public int DayOfWeek { get; private set; }
