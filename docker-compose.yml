@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   api:
     image: ${API_IMAGE}
     container_name: badmintonclub-api
     restart: always
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Database=${DB_CONNECTION_STRING}
@@ -20,6 +18,8 @@ services:
       - MasstransitConfiguration__Port=${RABBITMQ_PORT}
       - MasstransitConfiguration__UserName=${RABBITMQ_USER}
       - MasstransitConfiguration__Password=${RABBITMQ_PASS} 
+    networks:
+      - khoaluan
 
   migrator:
     image: ${MIGRATOR_IMAGE}
@@ -31,3 +31,6 @@ services:
       - ConnectionStrings__Database=${DB_CONNECTION_STRING}
       - ConnectionStrings__Redis=${REDIS_CONNECTION_STRING}
       - ConnectionStrings__MigrationsAssembly=LegendsTeamVN.BadmintonClub.Migrator
+
+networks:
+  khoaluan:
