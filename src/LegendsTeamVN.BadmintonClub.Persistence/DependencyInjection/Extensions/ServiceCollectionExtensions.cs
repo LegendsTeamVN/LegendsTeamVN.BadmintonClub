@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddPostgreSQLDbContextUnitOfWork<BadmintonDbContext>(connectionStrings);
 
         services.AddScoped<ICourtRepository, CourtRepository>();
+        services.AddScoped<IVenueRepository, VenueRepository>();
 
         return services;
     }
@@ -25,6 +26,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddDataSeederBadminton(this IServiceCollection services)
     {
         services.AddTransient<IDataSeeder, CourtDataSeeder>();
+        services.AddTransient<IDataSeeder, VenueDataSeeder>();
         return services;
     }
 }
