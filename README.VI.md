@@ -108,3 +108,20 @@ Khi API đang chạy, bạn có thể xem danh sách các API và test trực ti
 ## 📜 Giấy phép
 
 Dự án này được cấp phép theo Giấy phép GPL-3.0 - xem chi tiết tại [LICENSE](LICENSE.txt).
+
+
+cd infrastructure
+docker compose up -d
+cd ..
+
+dotnet run --project src/Hosts/LegendsTeamVN.BadmintonClub.Migrator
+
+Tạo Migration mới:
+
+bash
+dotnet ef migrations add UpdateTableRelationships -c BadmintonDbContext -p src/Hosts/LegendsTeamVN.BadmintonClub.Migrator -s src/Hosts/LegendsTeamVN.BadmintonClub.Migrator -o Migrations
+Cập nhật thay đổi vào Database:
+
+bash
+dotnet run --project src/Hosts/LegendsTeamVN.BadmintonClub.Migrator
+
