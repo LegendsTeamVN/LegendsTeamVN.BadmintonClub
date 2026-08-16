@@ -18,6 +18,8 @@ public static class ServiceCollectionExtensions
         services.AddPostgreSQLDbContextUnitOfWork<BadmintonDbContext>(connectionStrings);
 
         services.AddScoped<ICourtRepository, CourtRepository>();
+        services.AddScoped<IVenueScheduleRepository, VenueScheduleRepository>();
+        services.AddScoped<ICourtPricingRepository, CourtPricingRepository>();
         services.AddScoped<IVenueRepository, VenueRepository>();
 
         return services;

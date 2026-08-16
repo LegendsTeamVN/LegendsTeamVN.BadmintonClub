@@ -16,7 +16,6 @@ public class Court : AggregateRoot<Guid>
     public virtual Venue Venue { get; private set; } = default!;
     public virtual SportType SportType { get; private set; } = default!;
 
-    public virtual ICollection<CourtPricing> Pricings { get; private set; } = new List<CourtPricing>();
     public virtual ICollection<CourtMaintenance> Maintenances { get; private set; } = new List<CourtMaintenance>();
     public virtual ICollection<BookingDetail> BookingDetails { get; private set; } = new List<BookingDetail>();
 

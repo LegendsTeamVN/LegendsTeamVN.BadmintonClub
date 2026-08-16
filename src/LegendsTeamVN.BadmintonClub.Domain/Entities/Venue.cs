@@ -21,6 +21,7 @@ public class Venue : AggregateRoot<Guid>
     public virtual ICollection<VenueStaff> Staffs { get; private set; } = new List<VenueStaff>();
     public virtual ICollection<Review> Reviews { get; private set; } = new List<Review>();
     public virtual ICollection<Favourite> Favourites { get; private set; } = new List<Favourite>();
+    public virtual ICollection<CourtPricing> Pricings { get; private set; } = new List<CourtPricing>();
 
     protected Venue() { }
 
