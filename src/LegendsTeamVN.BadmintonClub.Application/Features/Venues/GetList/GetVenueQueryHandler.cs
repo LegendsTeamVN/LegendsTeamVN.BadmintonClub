@@ -18,14 +18,14 @@ public sealed class GetVenueQueryHandler(IVenueRepository venueRepository): IQue
             query = query.Where(x => x.Name.Contains(filter.Name));
         if (!string.IsNullOrWhiteSpace(filter.Address))
             query = query.Where(x => x.Address.Contains(filter.Address));
-        if (filter.OpenTime > TimeOnly.MinValue) 
-            query = query.Where(x => x.OpenTime == filter.OpenTime);
-        if (filter.CloseTime > TimeOnly.MinValue) 
-            query = query.Where(x => x.CloseTime == filter.CloseTime);
-        if (filter.Latitude != 0)
-            query = query.Where(x => x.Latitude == filter.Latitude);
-        if (filter.Longitude != 0)
-            query = query.Where(x => x.Longitude == filter.Longitude);
+        if (filter.OpenTime.HasValue) 
+            query = query.Where(x => x.OpenTime == filter.OpenTime.Value);
+        if (filter.CloseTime.HasValue) 
+            query = query.Where(x => x.CloseTime == filter.CloseTime.Value);
+        if (filter.Latitude.HasValue)
+            query = query.Where(x => x.Latitude == filter.Latitude.Value);
+        if (filter.Longitude.HasValue)
+            query = query.Where(x => x.Longitude == filter.Longitude.Value);
         
         var pagedResult = await query
             .Select(venue => new VenueResponse(

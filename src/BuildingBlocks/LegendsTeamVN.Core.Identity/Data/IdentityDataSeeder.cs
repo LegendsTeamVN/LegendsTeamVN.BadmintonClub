@@ -25,6 +25,11 @@ internal sealed class IdentityDataSeeder(
                     await roleManager.AddClaimAsync(role, new Claim("Permission", "Courts.Update"));
                     await roleManager.AddClaimAsync(role, new Claim("Permission", "Courts.Delete"));
                     await roleManager.AddClaimAsync(role, new Claim("Permission", "Courts.Read"));
+                    
+                    await roleManager.AddClaimAsync(role, new Claim("Permission", "Venues.Create"));
+                    await roleManager.AddClaimAsync(role, new Claim("Permission", "Venues.Update"));
+                    await roleManager.AddClaimAsync(role, new Claim("Permission", "Venues.Delete"));
+                    await roleManager.AddClaimAsync(role, new Claim("Permission", "Venues.Read"));
                 }
                 else if (roleName == "User")
                 {
