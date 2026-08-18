@@ -4,8 +4,6 @@ using LegendsTeamVN.BadmintonClub.Domain.Repositories;
 using LegendsTeamVN.Core.Application.Messaging.CQRS;
 using LegendsTeamVN.Core.Utilities.Pagination;
 using LegendsTeamVN.Core.Utilities.Results;
-using LegendsTeamVN.Core.Application.Messaging.CQRS;
-using LegendsTeamVN.Core.Utilities.Results;
 
 namespace LegendsTeamVN.BadmintonClub.Application.Features.Venues.GetList;
 
