@@ -26,7 +26,7 @@ public sealed class MeQueryHandler(
 
         var roles = await userManagerService.GetRolesAsync(userId);
         var permNames = await userManagerService.GetPermissionsAsync(userId);
-        var groupedPermissions = AppPermissions.GetGroupedPermissions(permNames);
+        var groupedPermissions = await userManagerService.GetGroupedPermissionsAsync(permNames, cancellationToken);
 
         var response = new UserResponse(
             user.Id,

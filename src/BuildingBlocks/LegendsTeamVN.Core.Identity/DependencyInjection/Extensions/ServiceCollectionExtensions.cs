@@ -94,7 +94,13 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddIdentityContext(this IServiceCollection services)
     {
         services.AddScoped<AppIdentityDbContext>();
+        return services;
+    }
 
+    public static IServiceCollection AddDataSeederIdentity(this IServiceCollection services)
+    {
+        services.AddScoped<IDataSeeder, IdentityDataSeeder>();
         return services;
     }
 }
+

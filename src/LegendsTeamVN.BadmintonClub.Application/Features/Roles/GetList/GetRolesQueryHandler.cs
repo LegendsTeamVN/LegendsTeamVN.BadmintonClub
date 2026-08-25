@@ -12,12 +12,15 @@ internal sealed class GetRolesQueryHandler(IUserManagerService userManagerServic
     public async Task<Result<List<RoleResponse>>> Handle(GetRolesQuery request, CancellationToken cancellationToken)
     {
         var roles = await userManagerService.GetRolesListAsync();
+        var allPermissions = await userManagerService.GetAllPermissionsListAsync(cancellationToken);
         var result = new List<RoleResponse>();
 
         foreach (var role in roles)
         {
             var permNames = await userManagerService.GetRolePermissionsAsync(role.Id);
-            var groupedPermissions = AppPermissions.GetGroupedPermissions(permNames);
+            var permSet = permNames.ToHashSet();
+            var rolePerms = allPermissions.Where(p => permSet.Contains(p.Name));
+            var groupedPermissions = AppPermissions.BuildTreeFromPermissions(rolePerms);
 
             result.Add(new RoleResponse(role.Id, role.Name ?? string.Empty, role.Description, groupedPermissions));
         }

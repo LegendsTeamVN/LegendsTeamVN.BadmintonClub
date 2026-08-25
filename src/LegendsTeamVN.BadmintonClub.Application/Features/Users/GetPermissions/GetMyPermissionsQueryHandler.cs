@@ -22,7 +22,7 @@ internal sealed class GetMyPermissionsQueryHandler(
         var roles = await userManagerService.GetRolesAsync(userId.Value);
         var permNames = await userManagerService.GetPermissionsAsync(userId.Value);
 
-        var groupedPermissions = AppPermissions.GetGroupedPermissions(permNames);
+        var groupedPermissions = await userManagerService.GetGroupedPermissionsAsync(permNames, cancellationToken);
 
         return Result.Success(new UserPermissionsResponse(userId.Value, email, roles, groupedPermissions));
     }

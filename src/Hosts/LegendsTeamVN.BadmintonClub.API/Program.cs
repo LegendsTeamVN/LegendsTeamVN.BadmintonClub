@@ -72,7 +72,7 @@ app.UseExceptionHandler();
 // Map all Minimal API endpoints automatically
 app.MapEndpoints();
 
-// Seed initial data & sync permissions in AppRoleClaims on startup
+// Seed initial data & sync permissions in AppPermissions & AppRolePermissions on startup
 using (var scope = app.Services.CreateScope())
 {
     var seeders = scope.ServiceProvider.GetServices<LegendsTeamVN.Core.Application.Data.IDataSeeder>();

@@ -19,7 +19,7 @@ internal sealed class GetUserByIdQueryHandler(IUserManagerService userManagerSer
 
         var roles = await userManagerService.GetRolesAsync(user.Id);
         var permNames = await userManagerService.GetPermissionsAsync(user.Id);
-        var groupedPermissions = AppPermissions.GetGroupedPermissions(permNames);
+        var groupedPermissions = await userManagerService.GetGroupedPermissionsAsync(permNames, cancellationToken);
 
         var response = new UserResponse(
             user.Id,

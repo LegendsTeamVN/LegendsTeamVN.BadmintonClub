@@ -196,7 +196,7 @@ Tất cả các API lấy danh sách (`GET`) hỗ trợ phân trang sẽ trả v
 ---
 
 ### 3.5. Gán quyền cho vai trò (`PUT /api/v1/roles/{id}/permissions`)
-* **Mô tả**: Gán/cập nhật danh sách quyền cho vai trò trong bảng `AppRoleClaims`.
+* **Mô tả**: Gán/cập nhật danh sách quyền cho vai trò trong bảng `AppRolePermissions`.
 * **Xác thực**: Quyền **`Roles.AssignPermissions`**.
 * **Path Parameter**: `id` (Guid).
 * **Request Body**:

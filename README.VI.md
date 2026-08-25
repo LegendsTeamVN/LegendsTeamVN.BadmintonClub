@@ -72,10 +72,11 @@ dotnet run --project src/Hosts/LegendsTeamVN.BadmintonClub.API
 
 ## 🔐 Phân Quyền & Hướng Dẫn Bật/Tắt Chế Độ Dev
 
-Hệ thống phân quyền được xây dựng theo **ASP.NET Core Identity** tiêu chuẩn:
+Hệ thống phân quyền được xây dựng theo mô hình **RBAC (Role-Based Access Control)**:
 - **`AppUsers`**: Quản lý tài khoản.
 - **`AppRoles`**: Quản lý các vai trò (`Admin`, `Manager`, `User`).
-- **`AppRoleClaims`**: Lưu trực tiếp toàn bộ danh sách Quyền của từng Role (`ClaimType = "Permission"`, `ClaimValue = "Roles.Create"`, `Users.Read`,...).
+- **`AppPermissions`**: Quản lý toàn bộ danh mục quyền hệ thống (`Name`, `DisplayName`, `GroupName`).
+- **`AppRolePermissions`**: Bảng liên kết gán quyền cho từng Role với Khóa chính kết hợp `(RoleId, PermissionId)` và Foreign Keys ngăn ngừa trùng lặp.
 
 ### Hướng dẫn Bật/Tắt tính năng Kiểm tra (Validate) khi lên Production:
 

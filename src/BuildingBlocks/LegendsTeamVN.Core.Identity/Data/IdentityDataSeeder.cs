@@ -3,15 +3,57 @@ using LegendsTeamVN.Core.Application.Data;
 using LegendsTeamVN.Core.Identity.Authorization;
 using LegendsTeamVN.Core.Identity.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace LegendsTeamVN.Core.Identity.Data;
 
 internal sealed class IdentityDataSeeder(
     UserManager<AppUser> userManager,
-    RoleManager<AppRole> roleManager) : IDataSeeder
+    RoleManager<AppRole> roleManager,
+    AppIdentityDbContext dbContext) : IDataSeeder
 {
     public async Task SeedAsync(CancellationToken cancellationToken = default)
     {
+        // 1. Sync all defined permissions to AppPermissions table
+        var flatPermissions = AppPermissions.GetFlatPermissions();
+        var existingPermissions = await dbContext.Permissions.ToListAsync(cancellationToken);
+        var existingPermDict = existingPermissions.ToDictionary(p => p.Name);
+
+        var hasPermChanges = false;
+        foreach (var def in flatPermissions)
+        {
+            if (!existingPermDict.TryGetValue(def.Name, out var perm))
+            {
+                var newPerm = new AppPermission
+                {
+                    Id = Guid.NewGuid(),
+                    Name = def.Name,
+                    DisplayName = def.DisplayName,
+                    GroupName = def.GroupName
+                };
+                await dbContext.Permissions.AddAsync(newPerm, cancellationToken);
+                existingPermDict[def.Name] = newPerm;
+                hasPermChanges = true;
+            }
+            else
+            {
+                if (perm.DisplayName != def.DisplayName || perm.GroupName != def.GroupName)
+                {
+                    perm.DisplayName = def.DisplayName;
+                    perm.GroupName = def.GroupName;
+                    hasPermChanges = true;
+                }
+            }
+        }
+
+        if (hasPermChanges)
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        var allDbPermissions = existingPermDict.Values.ToList();
+
+        // 2. Ensure Roles exist and assign permissions in AppRolePermissions
         var roles = new[] { "Admin", "Manager", "User" };
         foreach (var roleName in roles)
         {
@@ -22,47 +64,52 @@ internal sealed class IdentityDataSeeder(
                 await roleManager.CreateAsync(role);
             }
 
+            var currentRolePerms = await dbContext.RolePermissions
+                .Where(rp => rp.RoleId == role.Id)
+                .ToListAsync(cancellationToken);
+            var currentPermIdSet = currentRolePerms.Select(rp => rp.PermissionId).ToHashSet();
+
             if (roleName == "Admin")
             {
-                var adminPermissionsSet = AppPermissions
-                    .GetAllPermissionNames(AppPermissions.GetAllPermissionGroups())
-                    .ToHashSet();
-
-                var existingRoleClaims = await roleManager.GetClaimsAsync(role);
-                
-                // 1. Remove obsolete claims from Admin role in AppRoleClaims table (e.g. System.Administrator)
-                foreach (var claim in existingRoleClaims.Where(c => c.Type == "Permission"))
-                {
-                    if (!adminPermissionsSet.Contains(claim.Value))
+                // Admin gets all permissions
+                var missingPerms = allDbPermissions
+                    .Where(p => !currentPermIdSet.Contains(p.Id))
+                    .Select(p => new AppRolePermission
                     {
-                        await roleManager.RemoveClaimAsync(role, claim);
-                    }
-                }
+                        RoleId = role.Id,
+                        PermissionId = p.Id
+                    })
+                    .ToList();
 
-                var updatedRoleClaims = (await roleManager.GetClaimsAsync(role))
-                    .Where(c => c.Type == "Permission")
-                    .Select(c => c.Value)
-                    .ToHashSet();
-
-                // 2. Add all current permissions into AppRoleClaims table for Admin role
-                foreach (var perm in adminPermissionsSet)
+                if (missingPerms.Count > 0)
                 {
-                    if (!updatedRoleClaims.Contains(perm))
-                    {
-                        await roleManager.AddClaimAsync(role, new Claim("Permission", perm));
-                    }
+                    await dbContext.RolePermissions.AddRangeAsync(missingPerms, cancellationToken);
+                    await dbContext.SaveChangesAsync(cancellationToken);
                 }
             }
             else if (roleName == "User")
             {
-                var existingRoleClaims = await roleManager.GetClaimsAsync(role);
-                if (!existingRoleClaims.Any(c => c.Type == "Permission" && c.Value == "Courts.Read"))
+                var courtsReadPerm = allDbPermissions.FirstOrDefault(p => p.Name == AppPermissions.Courts.Read);
+                if (courtsReadPerm != null && !currentPermIdSet.Contains(courtsReadPerm.Id))
                 {
-                    await roleManager.AddClaimAsync(role, new Claim("Permission", "Courts.Read"));
+                    await dbContext.RolePermissions.AddAsync(new AppRolePermission
+                    {
+                        RoleId = role.Id,
+                        PermissionId = courtsReadPerm.Id
+                    }, cancellationToken);
+                    await dbContext.SaveChangesAsync(cancellationToken);
                 }
+            }
+
+            // Clean up any legacy permission claims in AppRoleClaims table
+            var existingRoleClaims = await roleManager.GetClaimsAsync(role);
+            foreach (var claim in existingRoleClaims.Where(c => c.Type == "Permission"))
+            {
+                await roleManager.RemoveClaimAsync(role, claim);
             }
         }
 
+        // 3. Ensure Default Admin Users exist
         var defaultAdmins = new (string UserName, string Email, string Password)[]
         {
             ("admin", "admin@admin.com", "admin"),
@@ -104,7 +151,7 @@ internal sealed class IdentityDataSeeder(
                     await userManager.AddPasswordAsync(existingUser, adminInfo.Password);
                 }
 
-                // Purge direct user claims so permissions come dynamically from AppRoleClaims
+                // Purge direct user claims
                 var userClaims = await userManager.GetClaimsAsync(existingUser);
                 foreach (var claim in userClaims.Where(c => c.Type == "Permission"))
                 {
@@ -114,3 +161,4 @@ internal sealed class IdentityDataSeeder(
         }
     }
 }
+

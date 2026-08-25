@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using LegendsTeamVN.Core.Identity.Abstractions;
+using LegendsTeamVN.Core.Identity.Authorization;
+using LegendsTeamVN.Core.Identity.Data;
 using LegendsTeamVN.Core.Identity.Entities;
 
 using Microsoft.AspNetCore.Identity;
@@ -7,7 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LegendsTeamVN.Core.Identity.Services;
 
-public sealed class UserManagerService(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager) : IUserManagerService
+public sealed class UserManagerService(
+    UserManager<AppUser> userManager, 
+    RoleManager<AppRole> roleManager,
+    AppIdentityDbContext dbContext) : IUserManagerService
 {
     public IQueryable<AppUser> GetUsersQueryable()
     {
@@ -45,20 +50,21 @@ public sealed class UserManagerService(UserManager<AppUser> userManager, RoleMan
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user == null) return permissions;
 
-        // Get permissions from user claims
+        // Get permissions from user claims (if any direct user claims exist)
         var userClaims = await userManager.GetClaimsAsync(user);
         permissions.AddRange(userClaims.Where(c => c.Type == "Permission").Select(c => c.Value));
 
-        // Get permissions from role claims in AppRoleClaims (AspNetRoleClaims)
+        // Get permissions from AppRolePermissions via user roles
         var roles = await userManager.GetRolesAsync(user);
-        foreach (var roleName in roles)
+        if (roles.Count > 0)
         {
-            var role = await roleManager.FindByNameAsync(roleName);
-            if (role != null)
-            {
-                var roleClaims = await roleManager.GetClaimsAsync(role);
-                permissions.AddRange(roleClaims.Where(c => c.Type == "Permission").Select(c => c.Value));
-            }
+            var rolePermissions = await dbContext.RolePermissions
+                .AsNoTracking()
+                .Where(rp => roles.Contains(rp.Role.Name!))
+                .Select(rp => rp.Permission.Name)
+                .ToListAsync();
+
+            permissions.AddRange(rolePermissions);
         }
 
         return permissions.Distinct().ToList();
@@ -197,11 +203,11 @@ public sealed class UserManagerService(UserManager<AppUser> userManager, RoleMan
 
     public async Task<IList<string>> GetRolePermissionsAsync(Guid roleId)
     {
-        var role = await roleManager.FindByIdAsync(roleId.ToString());
-        if (role == null) return Array.Empty<string>();
-
-        var claims = await roleManager.GetClaimsAsync(role);
-        return claims.Where(c => c.Type == "Permission").Select(c => c.Value).ToList();
+        return await dbContext.RolePermissions
+            .AsNoTracking()
+            .Where(rp => rp.RoleId == roleId)
+            .Select(rp => rp.Permission.Name)
+            .ToListAsync();
     }
 
     public async Task<bool> UpdateRolePermissionsAsync(Guid roleId, IEnumerable<string> permissions)
@@ -209,30 +215,51 @@ public sealed class UserManagerService(UserManager<AppUser> userManager, RoleMan
         var role = await roleManager.FindByIdAsync(roleId.ToString());
         if (role == null) return false;
 
-        var newPermsSet = permissions.ToHashSet();
-        var existingClaims = await roleManager.GetClaimsAsync(role);
+        var requestedPermNames = permissions.ToHashSet();
 
-        foreach (var claim in existingClaims.Where(c => c.Type == "Permission"))
-        {
-            if (!newPermsSet.Contains(claim.Value))
+        // 1. Get matching AppPermission entities from database
+        var validPermissions = await dbContext.Permissions
+            .Where(p => requestedPermNames.Contains(p.Name))
+            .ToListAsync();
+
+        // 2. Remove all existing permissions for this role
+        var existingRolePermissions = await dbContext.RolePermissions
+            .Where(rp => rp.RoleId == roleId)
+            .ToListAsync();
+
+        dbContext.RolePermissions.RemoveRange(existingRolePermissions);
+
+        // 3. Add new permissions
+        var newRolePermissions = validPermissions
+            .Select(p => new AppRolePermission
             {
-                await roleManager.RemoveClaimAsync(role, claim);
-            }
-        }
+                RoleId = roleId,
+                PermissionId = p.Id
+            })
+            .ToList();
 
-        var updatedClaims = (await roleManager.GetClaimsAsync(role))
-            .Where(c => c.Type == "Permission")
-            .Select(c => c.Value)
-            .ToHashSet();
-
-        foreach (var perm in newPermsSet)
-        {
-            if (!updatedClaims.Contains(perm))
-            {
-                await roleManager.AddClaimAsync(role, new Claim("Permission", perm));
-            }
-        }
+        await dbContext.RolePermissions.AddRangeAsync(newRolePermissions);
+        await dbContext.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task<List<AppPermission>> GetAllPermissionsListAsync(CancellationToken cancellationToken = default)
+    {
+        return await dbContext.Permissions.AsNoTracking().ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<PermissionGroupModel>> GetAllPermissionsTreeAsync(CancellationToken cancellationToken = default)
+    {
+        var permissions = await dbContext.Permissions.AsNoTracking().ToListAsync(cancellationToken);
+        return AppPermissions.BuildTreeFromPermissions(permissions);
+    }
+
+    public async Task<List<PermissionGroupModel>> GetGroupedPermissionsAsync(IEnumerable<string> permissionNames, CancellationToken cancellationToken = default)
+    {
+        var permSet = permissionNames.ToHashSet();
+        var allDbPermissions = await dbContext.Permissions.AsNoTracking().ToListAsync(cancellationToken);
+        var filtered = allDbPermissions.Where(p => permSet.Contains(p.Name));
+        return AppPermissions.BuildTreeFromPermissions(filtered);
     }
 }

@@ -1,3 +1,4 @@
+using LegendsTeamVN.Core.Identity.Authorization;
 using LegendsTeamVN.Core.Identity.Entities;
 
 namespace LegendsTeamVN.Core.Identity.Abstractions;
@@ -29,4 +30,9 @@ public interface IUserManagerService
     Task<(bool Succeeded, IEnumerable<string> Errors)> DeleteRoleAsync(Guid roleId);
     Task<IList<string>> GetRolePermissionsAsync(Guid roleId);
     Task<bool> UpdateRolePermissionsAsync(Guid roleId, IEnumerable<string> permissions);
+
+    // Permission Queries
+    Task<List<AppPermission>> GetAllPermissionsListAsync(CancellationToken cancellationToken = default);
+    Task<List<PermissionGroupModel>> GetAllPermissionsTreeAsync(CancellationToken cancellationToken = default);
+    Task<List<PermissionGroupModel>> GetGroupedPermissionsAsync(IEnumerable<string> permissionNames, CancellationToken cancellationToken = default);
 }

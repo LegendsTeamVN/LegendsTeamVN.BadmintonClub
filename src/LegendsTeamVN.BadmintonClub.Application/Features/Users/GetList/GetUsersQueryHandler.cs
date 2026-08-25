@@ -19,12 +19,15 @@ public sealed class GetUsersQueryHandler(IUserManagerService userManagerService)
         var pagedUsers = await query
             .ToPagedResultAsync(filter.PageNumber, filter.PageSize, cancellationToken);
 
+        var allPermissions = await userManagerService.GetAllPermissionsListAsync(cancellationToken);
         var userResponses = new List<UserResponse>();
         foreach (var user in pagedUsers.Items)
         {
             var roles = await userManagerService.GetRolesAsync(user.Id);
             var permissions = await userManagerService.GetPermissionsAsync(user.Id);
-            var groupedPermissions = AppPermissions.GetGroupedPermissions(permissions);
+            var permSet = permissions.ToHashSet();
+            var userPerms = allPermissions.Where(p => permSet.Contains(p.Name));
+            var groupedPermissions = AppPermissions.BuildTreeFromPermissions(userPerms);
             
             userResponses.Add(new UserResponse(
                 user.Id,
