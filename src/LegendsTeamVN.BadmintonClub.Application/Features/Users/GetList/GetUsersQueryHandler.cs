@@ -1,6 +1,7 @@
 using LegendsTeamVN.BadmintonClub.Application.DTOs.Users.Responses;
 using LegendsTeamVN.Core.Application.Messaging.CQRS;
 using LegendsTeamVN.Core.Identity.Abstractions;
+using LegendsTeamVN.Core.Identity.Authorization;
 using LegendsTeamVN.Core.Utilities.Pagination;
 using LegendsTeamVN.Core.Utilities.Results;
 
@@ -23,8 +24,18 @@ public sealed class GetUsersQueryHandler(IUserManagerService userManagerService)
         {
             var roles = await userManagerService.GetRolesAsync(user.Id);
             var permissions = await userManagerService.GetPermissionsAsync(user.Id);
+            var groupedPermissions = AppPermissions.GetGroupedPermissions(permissions);
             
-            userResponses.Add(new UserResponse(user.Id, user.Email!, user.UserName, roles, permissions));
+            userResponses.Add(new UserResponse(
+                user.Id,
+                user.Email ?? string.Empty,
+                user.UserName,
+                user.PhoneNumber,
+                user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTimeOffset.UtcNow,
+                user.LockoutEnd,
+                roles,
+                groupedPermissions
+            ));
         }
 
         var pagedResult = new PagedResult<UserResponse>(userResponses, pagedUsers.TotalCount, pagedUsers.PageNumber, pagedUsers.PageSize);

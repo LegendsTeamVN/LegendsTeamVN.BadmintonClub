@@ -4,28 +4,21 @@ using LegendsTeamVN.Core.Identity.Abstractions;
 using LegendsTeamVN.Core.Identity.Authorization;
 using LegendsTeamVN.Core.Utilities.Results;
 
-namespace LegendsTeamVN.BadmintonClub.Application.Features.Users.Me;
+namespace LegendsTeamVN.BadmintonClub.Application.Features.Users.GetById;
 
-public sealed class MeQueryHandler(
-    ICurrentUserService currentUserService,
-    IUserManagerService userManagerService) : IQueryHandler<MeQuery, UserResponse>
+internal sealed class GetUserByIdQueryHandler(IUserManagerService userManagerService)
+    : IQueryHandler<GetUserByIdQuery, UserResponse>
 {
-    public async Task<Result<UserResponse>> Handle(MeQuery request, CancellationToken cancellationToken)
+    public async Task<Result<UserResponse>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        if (!currentUserService.IsAuthenticated || !currentUserService.UserId.HasValue)
-        {
-            return Result.Failure<UserResponse>(Error.Unauthorized("User.Unauthorized", "User is not authenticated."));
-        }
-
-        var userId = currentUserService.UserId.Value;
-        var user = await userManagerService.FindByIdAsync(userId);
+        var user = await userManagerService.FindByIdAsync(request.Id);
         if (user == null)
         {
             return Result.Failure<UserResponse>(Error.NotFound("User.NotFound", "User not found."));
         }
 
-        var roles = await userManagerService.GetRolesAsync(userId);
-        var permNames = await userManagerService.GetPermissionsAsync(userId);
+        var roles = await userManagerService.GetRolesAsync(user.Id);
+        var permNames = await userManagerService.GetPermissionsAsync(user.Id);
         var groupedPermissions = AppPermissions.GetGroupedPermissions(permNames);
 
         var response = new UserResponse(
